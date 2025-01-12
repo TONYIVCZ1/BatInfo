@@ -15,14 +15,14 @@ int delkadata(char *data, int velikost){
 }
 
 void vytiskni(char capacity[3], int status, char manufacturer[6], char model[8], float voltage, float voltagemin, int cislobat){
-//				inicializace promennych
+//				init variables for vytiskni()
 	int x = 50, y = 10, r, g;
 	char data[x], buffer[x], zobrazjednou[4], barva[20];
 	char *tty = ttyname(STDIN_FILENO);
 	voltage = voltage / 100000; voltagemin = voltagemin / 100000;
 
 
-//		Vytvoreni ramecku (obdelnik)
+//		creating battry
 	for(int a = 0; a <= y; a++){
 		for(int b = 0; b <= x; b++){ buffer[b] = ' '; data[b] = 0x00; }
 		for(int b = 0; b <= x; b++){
@@ -33,14 +33,14 @@ void vytiskni(char capacity[3], int status, char manufacturer[6], char model[8],
 				if(b == 0 || b == x-4){ buffer[b] = '-'; }
 			}
 		}
-//		Pridani "+ polu" do ramecku aby vypadal jako AA baterie
+
 		     if(a == 4){ buffer[x-4] = '-'; buffer[x-3] = '-'; buffer[x-2] = '-'; buffer[x-1] = '-'; buffer[x-0] = '-'; }
 		else if(a == 5){ buffer[x-4] = '-'; buffer[x-3] = '-'; buffer[x-2] = '-'; buffer[x-1] = '-'; buffer[x-0] = '-'; }
 		else if(a == 6){ buffer[x-4] = '-'; buffer[x-3] = '-'; buffer[x-2] = '-'; buffer[x-1] = '-'; buffer[x-0] = '-'; }
 //		Data
 		switch(a){
 			case 2:
-				sprintf(data, "Baterie: %d", cislobat);
+				sprintf(data, "Battery: %d", cislobat);
 				break;
 			case 3:
 				for(int b = 0; b <= 11; b++){ data[b] = '_'; }
@@ -51,18 +51,18 @@ void vytiskni(char capacity[3], int status, char manufacturer[6], char model[8],
 			case 5:
 				switch(status){
 					case 1:
-						sprintf(data, "Nabiji se: %s%%", capacity);
+						sprintf(data, "Charging: %s%%", capacity);
 						break;
 					case 2:
-						sprintf(data, "Vybiji se: %s%%", capacity);
+						sprintf(data, "Discharging: %s%%", capacity);
 						break;
 					case 3:
-						sprintf(data, "Nenabiji se: %s%%", capacity);
+						sprintf(data, "Plugged AC: %s%%", capacity);
 						break;
 				}
 				break;
 			case 6:
-				sprintf(data, "      Min     Soucasna   Zbyvajici");
+				sprintf(data, "      Min     Now        Remains  ");
 				break;
 			case 7:
 				sprintf(data, "%.3fV    %.3fV    %.3fV", voltagemin, voltage, voltage-voltagemin);
@@ -70,22 +70,22 @@ void vytiskni(char capacity[3], int status, char manufacturer[6], char model[8],
 			case 8:
 					switch(status){
 						case 1:
-							if(voltage == 100){ sprintf(data, "Baterie je plne nabita. "); }
-										  else{ sprintf(data, "Baterie se nabiji. "); }
+							if(voltage == 100){ sprintf(data, "Battery is fully charged. "); }
+										  else{ sprintf(data, "Batteryis charging. "); }
 						case 2:
-							     if(atoi(capacity) >= 80                        ){ sprintf(data, "Baterie je nabita. "); }
-							else if(atoi(capacity) >= 20 && atoi(capacity) <= 80){ sprintf(data, "Baterie je v poradku. "); }
-							else if(                        atoi(capacity) <= 20){ sprintf(data, "Baterie je vybita. "); }
+							     if(atoi(capacity) >= 80                        ){ sprintf(data, "Baterry is chaged. "); }
+							else if(atoi(capacity) >= 20 && atoi(capacity) <= 80){ sprintf(data, "Baterry is good. "); }
+							else if(                        atoi(capacity) <= 20){ sprintf(data, "Baterry is empty. "); }
 					}
 				break;
 		}
-//		Zapis dat do ramecku
+
 		for(int b = 0; b <= sizeof(data); b++){
 			if(data[b] != 0x00){
 				buffer[(((x/2)-(delkadata(data, sizeof(data))/2))+b)-2] = data[b];
 			}
 		}
-//		Vytisknuti ramecku
+//		print all
 		for(int b = 0; b <= 3; b++){ zobrazjednou[b] = '0'; }
 		for(int b = 0; b <= x; b++){
 			if(atoi(capacity)/2 >= b){
@@ -119,15 +119,15 @@ void vytiskni(char capacity[3], int status, char manufacturer[6], char model[8],
 
 
 int main(){
-//				inicializace promennych
+//				init variables for main()
 	char technology[7], manufacturer[6], model[8], status[15], capacity[3], voltage[8], voltagemin[8], cesta[40];
 	int statuss;
 	FILE *soubor;
 	DIR* dir;
-//				smazani terminalu
+//				clearing terminal
 	system("clear");
 	printf("\n");
-//				Otevreni souboru, ziskani dat a zavreni souboru
+//				Opening files, getting data from files and closeing files
 
 	for(int a = 0; a <= 9; a++){
 		sprintf(cesta, "/sys/class/power_supply/BAT%d", a);
@@ -150,7 +150,7 @@ int main(){
 			soubor = fopen(cesta, "r"); fgets(voltage,      sizeof(voltage),      soubor); fclose(soubor);
 			sprintf(cesta, "/sys/class/power_supply/BAT%d/voltage_min_design", a);
 			soubor = fopen(cesta, "r"); fgets(voltagemin,   sizeof(voltagemin),   soubor); fclose(soubor);
-//				informace o nabijeni
+//				info about charging
 		         if(strstr(status, "Charging"))    { statuss = 1; }
 			else if(strstr(status, "Discharging")) { statuss = 2; }
 			else if(strstr(status, "Not charging")){ statuss = 3; }
