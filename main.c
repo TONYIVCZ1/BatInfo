@@ -71,7 +71,7 @@ void vytiskni(char capacity[3], int status, char manufacturer[6], char model[8],
 					switch(status){
 						case 1:
 							if(voltage == 100){ sprintf(data, "Battery is fully charged. "); }
-										  else{ sprintf(data, "Batteryis charging. "); }
+										  else{ sprintf(data, "Battery is charging. "); }
 						case 2:
 							     if(atoi(capacity) >= 80                        ){ sprintf(data, "Baterry is chaged. "); }
 							else if(atoi(capacity) >= 20 && atoi(capacity) <= 80){ sprintf(data, "Baterry is good. "); }
