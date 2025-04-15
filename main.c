@@ -6,7 +6,7 @@
 
 int delkadata(char *data, int velikost){
 	int delka = 0;
-	for(int a = 1; a <= velikost; a++){
+	for(int a = 0; a <= velikost; a++){
 		if(data[a] != 0x00){
 			delka++;
 		}
@@ -73,7 +73,7 @@ void vytiskni(char capacity[3], int status, char manufacturer[6], char model[8],
 							if(voltage == 100){ sprintf(data, "Battery is fully charged. "); }
 										  else{ sprintf(data, "Battery is charging. "); }
 						case 2:
-							     if(atoi(capacity) >= 80                        ){ sprintf(data, "Baterry is chaged. "); }
+							     if(atoi(capacity) >= 80                        ){ sprintf(data, "Baterry is charged. "); }
 							else if(atoi(capacity) >= 20 && atoi(capacity) <= 80){ sprintf(data, "Baterry is good. "); }
 							else if(                        atoi(capacity) <= 20){ sprintf(data, "Baterry is empty. "); }
 					}
